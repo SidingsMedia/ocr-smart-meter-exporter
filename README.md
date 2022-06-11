@@ -3,9 +3,10 @@ SPDX-FileCopyrightText: 2022 Sidings Media <contact@sidingsmedia.com>
 SPDX-License-Identifier: MIT
 -->
 
-# Project name
+# Smart Meter OCR Monitor
 
-A description of what this project is and what it does
+An OCR based monitor for UK smart meters based upon the Raspberry Pi that
+provides metrics via a Prometheus endpoint.
 
 ## Licence
 This repo uses the [REUSE](https://reuse.software) standard in order to
