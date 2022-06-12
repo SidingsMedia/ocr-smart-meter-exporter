@@ -21,6 +21,9 @@ class Logging:
         if os.environ("OCR_EXPORTER_HIDE_LOG"):
             hidden_logs = os.environ("OCR_EXPORTER_HIDE_LOG").upper().split(',')
             self.hide_logs.append(hidden_logs)
+        
+        if not os.environ("PYTHON_ENV") == "development":
+            self.hide_logs.append("dev")
 
     def log(self, module: str, msg: str, level: str) -> None:
         """
@@ -43,6 +46,21 @@ class Logging:
 
         if level not in self.hide_logs:
             print(formatted_message)
+
+    def dev(self, module: str, msg: str) -> None:
+        """
+        dev Write development log
+
+        This should only be used for development as it is hidden
+        normally in order to prevent overly verbose logs
+
+        :param module: Section of application log originates from
+        :type module: str
+        :param msg: Log message
+        :type msg: str
+        """
+
+        self.log(module, msg, "dev")
 
     def debug(self, module: str, msg: str) -> None:
         """
