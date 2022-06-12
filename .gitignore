@@ -1,5 +1,10 @@
 # SPDX-FileCopyrightText: 2022 Sidings Media <contact@sidingsmedia.com>
 # SPDX-License-Identifier: CC0-1.0
 
+# Python files
 env
 __pycache__
+
+# Editor files
+.vs
+.vscode
