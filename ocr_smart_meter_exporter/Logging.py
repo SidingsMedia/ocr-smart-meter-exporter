@@ -14,15 +14,13 @@ class Logging:
     https://github.com/louislam/uptime-kuma/blob/39aa0a7f07644ecdd99e0a8ddacbbb24e2afd931/src/util.ts#L61-L148
     """
 
-    
-    hide_logs:list[str]
-
     def __init__(self) -> None:
-        if os.environ("OCR_EXPORTER_HIDE_LOG"):
-            hidden_logs = os.environ("OCR_EXPORTER_HIDE_LOG").upper().split(',')
+        self.hide_logs: list[str] = []
+        if "OCR_EXPORTER_HIDE_LOG" in os.environ:
+            hidden_logs = os.environ["OCR_EXPORTER_HIDE_LOG"].upper().split(',')
             self.hide_logs.append(hidden_logs)
         
-        if not os.environ("PYTHON_ENV") == "development":
+        if "PYTHON_ENV" not in os.environ and not os.environ["PYTHON_ENV"] == "development":
             self.hide_logs.append("dev")
 
     def log(self, module: str, msg: str, level: str) -> None:
@@ -41,7 +39,7 @@ class Logging:
         """
 
         level = level.upper()
-        current_time = datetime.time.isoformat()
+        current_time = datetime.datetime.now().isoformat()
         formatted_message = f"{current_time} [{module}] {level}: {msg}"
 
         if level not in self.hide_logs:
