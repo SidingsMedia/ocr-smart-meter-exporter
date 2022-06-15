@@ -20,8 +20,9 @@ class Logging:
             hidden_logs = os.environ["OCR_EXPORTER_HIDE_LOG"].upper().split(',')
             self.hide_logs.append(hidden_logs)
         
-        if "PYTHON_ENV" not in os.environ and not os.environ["PYTHON_ENV"] == "development":
-            self.hide_logs.append("dev")
+        if "PYTHON_ENV" in os.environ:
+            if not os.environ["PYTHON_ENV"] == "development":
+                self.hide_logs.append("dev")
 
     def log(self, module: str, msg: str, level: str) -> None:
         """
