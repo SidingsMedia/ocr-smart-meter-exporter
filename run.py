@@ -8,19 +8,21 @@ Call this file to start the application
 """
 
 import sys
-import os
 
 from ocr_smart_meter_exporter import Application
 
-def main() -> None:
+def main() -> int:
     """
     main Entry point
 
     Entrypoint to the application
+
+    :return: Status code 0 = success, any other code indicates faliure
+    :rtype: int
     """
 
     app = Application()
-    app.run()
+    return(app.run())
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -1,13 +1,12 @@
 # SPDX-FileCopyrightText: 2022 Sidings Media <contact@sidingsmedia.com>
 # SPDX-License-Identifier: MIT
 
-import sys
-
 from prometheus_client.core import REGISTRY
 from prometheus_client import start_http_server
 
 from .__version__ import __title__, __description__, __version__, __copyright__, __license__
 from .Logging import log
+from .Errors import FatalError
 from .OCRCollector import OCRCollector
 from .ocr import OCR
 
@@ -38,16 +37,28 @@ class Application:
         run Run the application
 
         Main loop of the application.
+
+        :return: Status code
+        :rtype: int
         """
 
-        self._startServer()
-
+        # Wrap all actions in try except in order to handle all Fatal
+        # exceptions and keyboard interupts. In order to pass a fatal
+        # interupt down through from other errors, the FatalError should
+        # be raised.
         try:
+            self._startServer()
+
+            # Main application loop
             while True:
                 pass
-        except KeyboardInterrupt as e:
+        
+        except FatalError:
+            return self._halt(1)
+
+        except KeyboardInterrupt:
             log.info("APPLICATION", "Keyboard interupt detected, shutting down")
-            self._halt()
+            return self._halt()
 
     def _startServer(self) -> None:
         """
@@ -60,7 +71,7 @@ class Application:
             start_http_server(port=self._port)
         except Exception as e:
             log.error("WEB SERVER", f"Unhandled exception: {e}")
-            self._halt(1)
+            raise FatalError(e)
         else:
             log.info("WEB SERVER", "Successfully started server")
 
@@ -75,7 +86,7 @@ class Application:
         print(f"Copyright: {__copyright__}")
         print(f"License: {__license__}")
 
-    def _halt(self, status: int = 0) -> None:
+    def _halt(self, status: int = 0) -> int:
         """
         _halt End the program
 
@@ -84,7 +95,9 @@ class Application:
         :param status: Exit code. 0 = success. Any other value means
             error, defaults to 0
         :type status: int, optional
+        :return: Status code
+        :rtype: int
         """
 
         log.info("APPLICATION", "Final shutdown message")
-        sys.exit(status)
+        return status
