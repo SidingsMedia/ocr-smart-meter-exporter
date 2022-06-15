@@ -8,31 +8,19 @@ Call this file to start the application
 """
 
 import sys
+import os
 
 from ocr_smart_meter_exporter import Application
 
-def main() -> int:
+def main() -> None:
     """
     main Entry point
 
     Entrypoint to the application
-
-    :return: Exit code
-    :rtype: int
     """
 
     app = Application()
-
-    # Start app with catch all exception to log errors. This does not
-    # provide any cleanup. This should be included in the main
-    # application.
-    try:
-        r_type = app.run()
-    except Exception as e:
-        print(e)
-        r_type = 1
-        
-    return r_type
+    app.run()
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
