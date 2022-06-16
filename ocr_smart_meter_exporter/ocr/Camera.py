@@ -29,11 +29,18 @@ class Camera:
             self._log.warn("CAMERA", "Failed to capture image")
 
     def _show(self, name: str, image: Any) -> None:
-        cv2.imshow(name, image)
+        """
+        _show Show the image using the built in browser
 
-        wait_time = 1000
-        while cv2.getWindowProperty(name, cv2.WND_PROP_VISIBLE) >= 1:
-            key_code = cv2.waitKey(wait_time)
-            if (key_code & 0xFF) == ord("q"):
-                cv2.destroyWindow(name)
-                break
+        To exit the user can press any key or in most cases the X button
+        of the window. Note, this will block the process until the user
+        exits.
+
+        :param name: Name of window
+        :type name: str
+        :param image: Image to show
+        :type image: Any
+        """
+        
+        cv2.imshow(name, image)
+        cv2.waitKey(0)
