@@ -3,6 +3,7 @@
 
 from prometheus_client.core import REGISTRY
 from prometheus_client import start_http_server
+from dotenv import load_dotenv
 
 from .__version__ import __title__, __description__, __version__, __copyright__, __license__
 from .Logging import log
@@ -23,6 +24,8 @@ class Application:
         """
         __init__ Create instance of Application
         """
+
+        load_dotenv()
 
         self._ouputInfo()
 
