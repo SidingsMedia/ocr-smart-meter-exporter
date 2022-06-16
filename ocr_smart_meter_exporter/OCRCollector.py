@@ -6,6 +6,7 @@ from prometheus_client.core import GaugeMetricFamily
 from .Logging import log
 from .ocr import OCR
  
+ 
 class OCRCollector(object):
 
     def __init__(self, ocr_processor: OCR) -> None:

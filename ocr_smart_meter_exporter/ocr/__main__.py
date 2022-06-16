@@ -25,17 +25,55 @@ class Log:
     This should not be used for production usage and is only really
     suitable for use in development and testing of this module.
     """
+
     def debug(module: str, message: str) -> None:
+        """
+        debug Write debug log
+
+        :param module: Module log originates from
+        :type module: str
+        :param message: Message to log
+        :type message: str
+        """
+
         print(f"[{module}] DEBUG: {message}")
 
     def info(module: str, message: str) -> None:
+        """
+        info Write info log
+
+        :param module: Module log originates from
+        :type module: str
+        :param message: Message to log
+        :type message: str
+        """
+
         print(f"[{module}] INFO: {message}")
 
     def warn(module: str, message: str) -> None:
+        """
+        warn Write warn log
+
+        :param module: Module log originates from
+        :type module: str
+        :param message: Message to log
+        :type message: str
+        """
+
         print(f"[{module}] WARN: {message}")
     
     def error(module: str, message: str) -> None:
+        """
+        error Write error log
+
+        :param module: Module log originates from
+        :type module: str
+        :param message: Message to log
+        :type message: str
+        """
+        
         print(f"[{module}] ERROR: {message}")
+
 
 def main() -> int:
     """

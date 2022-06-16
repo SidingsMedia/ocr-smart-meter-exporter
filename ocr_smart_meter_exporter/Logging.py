@@ -4,6 +4,7 @@
 import os
 import datetime
 
+
 class Logging:
     """
     Unified logging
@@ -15,6 +16,10 @@ class Logging:
     """
 
     def __init__(self) -> None:
+        """
+        __init__ Create instance of Logging
+        """
+        
         self.hide_logs: list[str] = []
         if "OCR_EXPORTER_HIDE_LOG" in os.environ:
             hidden_logs = os.environ["OCR_EXPORTER_HIDE_LOG"].upper().split(',')

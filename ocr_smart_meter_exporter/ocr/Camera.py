@@ -11,6 +11,14 @@ class Camera:
     A class representing the camera to be used
     """
     def __init__(self, cam_port: int, log: Any) -> None:
+        """
+        __init__ Create instance of camera
+
+        :param cam_port: Port camera is accessible on
+        :type cam_port: int
+        :param log: Logging instance
+        :type log: Any
+        """
         
         self._camera = cv2.VideoCapture(cam_port)
         self._camera.set(cv2.CAP_PROP_FRAME_WIDTH, 2592)
@@ -19,6 +27,18 @@ class Camera:
         self._log = log
 
     def capture(self, show: bool = False):
+        """
+        capture Capture image from camera
+
+        Capture the current frame from the specified camera and return
+        it. No preprocessing is completed on this image, this must be
+        done after.
+
+        :param show: Should the image be shown to the user, defaults to False
+        :type show: bool, optional
+        :return: Image
+        :rtype: Any
+        """
 
         self._log.debug("CAMERA" , "Capturing image")
         result, image = self._camera.read()
