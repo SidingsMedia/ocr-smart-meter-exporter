@@ -23,8 +23,17 @@ class Camera:
         if result:
             if show:
                 self._log.info("CAMERA", "Waiting for window to close before continuing")
-                cv2.imshow("capture.png", image)
-                cv2.waitKey(0)
+                self._show("capture", image)
             return image
         else:
             self._log.warn("CAMERA", "Failed to capture image")
+
+    def _show(self, name: str, image: Any) -> None:
+        cv2.imshow(name, image)
+
+        wait_time = 1000
+        while cv2.getWindowProperty(name, cv2.WND_PROP_VISIBLE) >= 1:
+            key_code = cv2.waitKey(wait_time)
+            if (key_code & 0xFF) == ord("q"):
+                cv2.destroyWindow(name)
+                break
