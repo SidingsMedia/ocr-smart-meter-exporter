@@ -7,9 +7,15 @@
 Call this file to start the application
 """
 
+assert len( __package__ ) > 0, """
+The '__main__' module does not seem to have been run in the context of a
+runnable package ... did you forget to add the '-m' flag?
+Usage: python3 -m ocr_smart_meter_exporter
+"""
+
 import sys
 
-from ocr_smart_meter_exporter import Application
+from .Application import Application
 
 def main() -> int:
     """
