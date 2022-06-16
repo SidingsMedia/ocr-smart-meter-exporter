@@ -4,6 +4,10 @@
 from typing import Any
 import os
 
+import numpy
+import cv2
+import pytesseract
+
 from .Camera import Camera
 
 
@@ -36,8 +40,14 @@ class OCR:
                 self._show_capture = False
         else:
             self._show_capture = False
+        
+        if "OCR_IMAGE_PATH" in os.environ:
+            self._log.info("OCR", "Using image from disk")
+            self._image_path = os.environ["OCR_IMAGE_PATH"]
+        else:
+            self._image_path = ""
 
-        self._camera = Camera(0, logger)
+        self._camera = Camera(0, logger, self._image_path)
 
     def get(self) -> int:
         """
@@ -50,6 +60,11 @@ class OCR:
         self._log.info("OCR", "Getting current meter value")
 
         self._camera.capture(self._show_capture)
+        image = self._camera.preprocess(self._show_capture)
+        
+        text = pytesseract.image_to_string(image, config="--oem 3 --psm 11")
+        print("Extracted text")
+        print(text)
 
         # Testing value
         return 0

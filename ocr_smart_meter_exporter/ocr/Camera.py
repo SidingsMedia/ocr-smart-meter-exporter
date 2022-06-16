@@ -4,13 +4,14 @@
 from typing import Any
 
 import cv2
+import numpy
 
 
 class Camera:
     """
     A class representing the camera to be used
     """
-    def __init__(self, cam_port: int, log: Any) -> None:
+    def __init__(self, cam_port: int, log: Any, image_path: str = "") -> None:
         """
         __init__ Create instance of camera
 
@@ -18,15 +19,31 @@ class Camera:
         :type cam_port: int
         :param log: Logging instance
         :type log: Any
+        :param image_path: If defined, the specified image will be used
+            instead of the camera, defaults to ""
+        :type image_path: str, optional
         """
+
+        self._image: numpy.ndarray
+
+        if image_path:
+            self._use_image = True
+            self._image = cv2.imread(image_path)
+        else: 
+            self._use_image = False
         
-        self._camera = cv2.VideoCapture(cam_port)
-        self._camera.set(cv2.CAP_PROP_FRAME_WIDTH, 2592)
-        self._camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1944)
-        
+        if not self._use_image:
+            self._camera = cv2.VideoCapture(cam_port)
+            self._camera.set(cv2.CAP_PROP_FRAME_WIDTH, 2592)
+            self._camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1944)
+
         self._log = log
 
-    def capture(self, show: bool = False):
+        # Make an initial capture to populate _image
+        self.capture()
+        
+
+    def capture(self, show: bool = False) -> numpy.ndarray:
         """
         capture Capture image from camera
 
@@ -37,21 +54,82 @@ class Camera:
         :param show: Should the image be shown to the user, defaults to False
         :type show: bool, optional
         :return: Image
-        :rtype: Any
+        :rtype: numpy.ndarray
         """
 
+        if self._use_image:
+            self._log.info("CAMERA", "Using preloaded image instead of camera")
+            return self._image
+
         self._log.debug("CAMERA" , "Capturing image")
-        result, image = self._camera.read()
+        result, self._image = self._camera.read()
 
         if result:
             if show:
                 self._log.info("CAMERA", "Waiting for window to close before continuing")
-                self._show("capture", image)
-            return image
+                self._show("capture")
+            return self._image
         else:
             self._log.warn("CAMERA", "Failed to capture image")
 
-    def _show(self, name: str, image: Any) -> None:
+    def preprocess(self, show: bool = False) -> numpy.ndarray:
+        """
+        preprocess Preprocess image to normalize ready for processing
+
+        Run a series of processing steps to normalize the image and
+        convert to grayscale
+
+        :param show: Should the image be shown after each step?, defaults to False
+        :type show: bool, optional
+        :return: Image
+        :rtype: numpy.ndarray
+        """
+
+        self._log.debug("CAMERA", "Starting image preprocessing")
+        
+        self._toGrayscale(show)
+        self._opening(show)
+        self._canny(show)
+        
+        return self._image
+
+    def _toGrayscale(self, show: bool = False) -> None:
+        """
+        _toGrayscale Convert _image to grayscale
+
+        :param show: Should the image be shown?, defaults to False
+        :type show: bool, optional
+        """
+
+        self._image = cv2.cvtColor(self._image, cv2.COLOR_BGR2GRAY)
+
+        if show:
+            self._show("grayscale")
+    
+    def _opening(self, show: bool = False) -> None:
+        """
+        _opening Perform opening operation on image
+
+        Perform an erosion operation followed by a dilation operation on
+        the image
+
+        :param show: Should the image be shown?, defaults to False
+        :type show: bool, optional
+        """
+
+        kernel = numpy.ones((5,5),numpy.uint8)
+        self._image =  cv2.morphologyEx(self._image, cv2.MORPH_OPEN, kernel)
+        
+        if show:
+            self._show("opening")
+
+    def _canny(self, show: bool = False) -> None:
+        self._image = cv2.Canny(self._image, 24, 25)
+
+        if show:
+            self._show("canny")
+
+    def _show(self, name: str) -> None:
         """
         _show Show the image using the built in browser
 
@@ -61,9 +139,8 @@ class Camera:
 
         :param name: Name of window
         :type name: str
-        :param image: Image to show
-        :type image: Any
         """
 
+        image = cv2.resize(self._image, (960, 540))
         cv2.imshow(name, image)
         cv2.waitKey(0)
