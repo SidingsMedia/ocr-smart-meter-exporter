@@ -90,7 +90,7 @@ class Application:
         """
         _halt End the program
 
-        Exit the program after cleaning up by using sys.exit()
+        Exit the program after cleaning up
 
         :param status: Exit code. 0 = success. Any other value means
             error, defaults to 0
