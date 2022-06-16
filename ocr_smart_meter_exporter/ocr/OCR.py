@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: MIT
 
 from typing import Any
+import os
+
+from .Camera import Camera
 
 
 class OCR:
@@ -24,6 +27,18 @@ class OCR:
         self._log = logger
         self._log.debug("OCR", "Creating instance of OCR")
 
+        # Process environment variables
+        if "OCR_SHOW_CAPTURE" in os.environ:
+            try:
+                self._show_capture = bool(int(os.environ["OCR_SHOW_CAPTURE"]))
+            except ValueError:
+                self._log.warn("CAMERA", f"Invalid value for OCR_SHOW_CAPTURE \"{os.environ['OCR_SHOW_CAPTURE']}\". Accepted values are 0 and 1")
+                self._show_capture = False
+        else:
+            self._show_capture = False
+
+        self._camera = Camera(0, logger)
+
     def get(self) -> int:
         """
         get Get the current value displayed
@@ -33,6 +48,8 @@ class OCR:
         """
         
         self._log.info("OCR", "Getting current meter value")
+
+        self._camera.capture(self._show_capture)
 
         # Testing value
         return 0
