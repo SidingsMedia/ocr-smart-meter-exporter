@@ -13,6 +13,9 @@ class Camera:
     def __init__(self, cam_port: int, log: Any) -> None:
         
         self._camera = cv2.VideoCapture(cam_port)
+        self._camera.set(cv2.CAP_PROP_FRAME_WIDTH, 2592)
+        self._camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1944)
+        
         self._log = log
 
     def capture(self, show: bool = False):
@@ -41,6 +44,6 @@ class Camera:
         :param image: Image to show
         :type image: Any
         """
-        
+
         cv2.imshow(name, image)
         cv2.waitKey(0)
