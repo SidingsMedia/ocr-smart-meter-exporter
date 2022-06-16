@@ -8,6 +8,7 @@ __pycache__
 # Editor files
 .vs
 .vscode
+.env
 
 # Output files
 *.png
