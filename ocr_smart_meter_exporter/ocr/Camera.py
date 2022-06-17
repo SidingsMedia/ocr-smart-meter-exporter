@@ -87,49 +87,77 @@ class Camera:
 
         self._log.debug("CAMERA", "Starting image preprocessing")
         
-        self._toGrayscale(show)
-        self._opening(show)
-        self._canny(show)
+        self._image = self._toGrayscale(self._image, show)
+        self._image = self._opening(self._image, show)
+        canny = self._canny(self._image, show)
         
         return self._image
 
-    def _toGrayscale(self, show: bool = False) -> None:
+    def _toGrayscale(self, image: numpy.ndarray, show: bool = False) -> numpy.ndarray:
         """
         _toGrayscale Convert _image to grayscale
 
+        :param image: Image to perform processing on
+        :type image: numpy.ndarray
         :param show: Should the image be shown?, defaults to False
         :type show: bool, optional
+        :return: Processed image
+        :rtype: numpy.ndarray
         """
 
-        self._image = cv2.cvtColor(self._image, cv2.COLOR_BGR2GRAY)
+        image = cv2.cvtColor(self._image, cv2.COLOR_BGR2GRAY)
 
         if show:
-            self._show("grayscale")
+            self._show("grayscale", image)
+
+        return image
     
-    def _opening(self, show: bool = False) -> None:
+    def _opening(self, image: numpy.ndarray, show: bool = False) -> numpy.ndarray:
         """
         _opening Perform opening operation on image
 
         Perform an erosion operation followed by a dilation operation on
         the image
 
+        :param image: Image to perform processing on
+        :type image: numpy.ndarray
         :param show: Should the image be shown?, defaults to False
         :type show: bool, optional
+        :return: Processed image
+        :rtype: numpy.ndarray
         """
 
         kernel = numpy.ones((5,5),numpy.uint8)
-        self._image =  cv2.morphologyEx(self._image, cv2.MORPH_OPEN, kernel)
+        image =  cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
         
         if show:
-            self._show("opening")
+            self._show("opening", image)
 
-    def _canny(self, show: bool = False) -> None:
-        self._image = cv2.Canny(self._image, 24, 25)
+        return image
+
+    def _canny(self, image: numpy.ndarray, show: bool = False) -> numpy.ndarray:
+        """
+        _canny Perform canny edge detection
+
+        Perform canny edge dectection on the image with the following
+        thresholds, 24, 25
+
+        :param image: Image to perform processing on
+        :type image: numpy.ndarray
+        :param show: Should the image be show, defaults to False
+        :type show: bool, optional
+        :return: Processed image
+        :rtype: numpy.ndarray
+        """
+
+        image = cv2.Canny(image, 24, 25)
 
         if show:
-            self._show("canny")
+            self._show("canny", image)
 
-    def _show(self, name: str) -> None:
+        return image
+
+    def _show(self, name: str, image: numpy.ndarray = None) -> None:
         """
         _show Show the image using the built in browser
 
@@ -137,10 +165,15 @@ class Camera:
         of the window. Note, this will block the process until the user
         exits.
 
+        :param image: Image to perform processing on, defaults to self._image
+        :type image: numpy.ndarray, optional
         :param name: Name of window
         :type name: str
         """
 
-        image = cv2.resize(self._image, (960, 540))
+        if image is None:
+            image = self._image
+
+        image = cv2.resize(image, (1920, 1080))
         cv2.imshow(name, image)
         cv2.waitKey(0)
